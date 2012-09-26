@@ -23,16 +23,16 @@ import java.util.Set;
 
 import de.congrace.exp4j.exception.UnknownFunctionException;
 import de.congrace.exp4j.exception.UnparsableExpressionException;
-import de.congrace.exp4j.function.CustomFunction;
-import de.congrace.exp4j.operator.CustomOperator;
+import de.congrace.exp4j.function.Function;
+import de.congrace.exp4j.operator.Operator;
 
 public class Tokenizer {
 	private final Set<String> variableNames;
-	private final Map<String, CustomFunction> functions;
-	private final Map<String, CustomOperator> operators;
+	private final Map<String, Function> functions;
+	private final Map<String, Operator> operators;
 
-	public Tokenizer(Set<String> variableNames, Map<String, CustomFunction> functions,
-			Map<String, CustomOperator> operators) {
+	public Tokenizer(Set<String> variableNames, Map<String, Function> functions,
+			Map<String, Operator> operators) {
 		super();
 		this.variableNames = variableNames;
 		this.functions = functions;

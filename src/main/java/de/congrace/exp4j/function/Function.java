@@ -20,7 +20,7 @@ import de.congrace.exp4j.exception.InvalidCustomFunctionException;
 
 /**
  * this classed is used to create custom functions for exp4j<br/> <br/> <b>Example</b><br/>
- * <code><pre>{@code} CustomFunction fooFunc = new CustomFunction("foo") { public double
+ * <code><pre>{@code} Function fooFunc = new Function("foo") { public double
  * applyFunction(double value) { return value*Math.E; } }; double varX=12d; Calculable calc = new
  * ExpressionBuilder("foo(x)").withCustomFunction(fooFunc).withVariable("x",varX).build();
  * assertTrue(calc.calculate() == Math.E * varX); }</pre></code>
@@ -28,16 +28,16 @@ import de.congrace.exp4j.exception.InvalidCustomFunctionException;
  * @author frank asseg
  *
  */
-public abstract class CustomFunction {
+public abstract class Function {
 	private final int argumentCount;
 	private final String name;
 
 	/**
-	 * create a new single value input CustomFunction with a set name
+	 * create a new single value input Function with a set name
 	 *
 	 * @param value the name of the function (e.g. foo)
 	 */
-	protected CustomFunction(String name) throws InvalidCustomFunctionException {
+	protected Function(String name) throws InvalidCustomFunctionException {
 		this.argumentCount = 1;
 		this.name = name;
 		int firstChar = (int) name.charAt(0);
@@ -47,12 +47,12 @@ public abstract class CustomFunction {
 	}
 
 	/**
-	 * create a new single value input CustomFunction with a set name
+	 * create a new single value input Function with a set name
 	 *
 	 * @param value the name of the function (e.g. foo)
 	 * @param argumentCount the minimum number of arguments this function needs
 	 */
-	protected CustomFunction(String name, int argumentCount) throws InvalidCustomFunctionException {
+	protected Function(String name, int argumentCount) throws InvalidCustomFunctionException {
 		this.argumentCount = argumentCount;
 		this.name = name;
 	}

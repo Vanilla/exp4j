@@ -21,13 +21,13 @@ import java.util.Stack;
 
 import de.congrace.exp4j.exception.UnknownFunctionException;
 import de.congrace.exp4j.exception.UnparsableExpressionException;
-import de.congrace.exp4j.function.CustomFunction;
-import de.congrace.exp4j.operator.CustomOperator;
+import de.congrace.exp4j.function.Function;
+import de.congrace.exp4j.operator.Operator;
 import de.congrace.exp4j.token.Token;
 import de.congrace.exp4j.token.Tokenizer;
 
 public abstract class RPNConverter {
-	private static String substituteUnaryOperators(String expr, Map<String, CustomOperator> operators) {
+	private static String substituteUnaryOperators(String expr, Map<String, Operator> operators) {
 		final StringBuilder exprBuilder = new StringBuilder(expr.length());
 		final char[] data = expr.toCharArray();
 		char lastChar = ' ';
@@ -68,7 +68,7 @@ public abstract class RPNConverter {
 	}
 
 	public static RPNExpression toRPNExpression(String infix, Map<String, Double> variables,
-			Map<String, CustomFunction> customFunctions, Map<String, CustomOperator> operators)
+			Map<String, Function> customFunctions, Map<String, Operator> operators)
 			throws UnknownFunctionException, UnparsableExpressionException {
 		final Tokenizer tokenizer = new Tokenizer(variables.keySet(), customFunctions, operators);
 		final StringBuilder output = new StringBuilder(infix.length());
@@ -84,7 +84,7 @@ public abstract class RPNConverter {
 		return new RPNExpression(tokenizer.getTokens(postfix), postfix, variables);
 	}
 
-	private static boolean isOperatorCharacter(char c, Map<String, CustomOperator> operators) {
+	private static boolean isOperatorCharacter(char c, Map<String, Operator> operators) {
 		for (String symbol : operators.keySet()) {
 			if (symbol.indexOf(c) != -1) {
 				return true;

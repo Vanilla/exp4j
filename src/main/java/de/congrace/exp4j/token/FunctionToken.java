@@ -20,14 +20,14 @@ import java.util.Map;
 import java.util.Stack;
 
 import de.congrace.exp4j.exception.UnknownFunctionException;
-import de.congrace.exp4j.function.CustomFunction;
+import de.congrace.exp4j.function.Function;
 import de.congrace.exp4j.util.ArrayUtil;
 
 public class FunctionToken extends CalculationToken {
 	private final String functionName;
-	private final CustomFunction function;
+	private final Function function;
 
-	public FunctionToken(String value, CustomFunction function) throws UnknownFunctionException {
+	public FunctionToken(String value, Function function) throws UnknownFunctionException {
 		super(value);
 		if (value == null) {
 			throw new UnknownFunctionException(value);

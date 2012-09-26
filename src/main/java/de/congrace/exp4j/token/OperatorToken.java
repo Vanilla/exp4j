@@ -19,7 +19,7 @@ package de.congrace.exp4j.token;
 import java.util.Map;
 import java.util.Stack;
 
-import de.congrace.exp4j.operator.CustomOperator;
+import de.congrace.exp4j.operator.Operator;
 
 /**
  * {@link Token} for Operations like +,-,*,/,% and ^
@@ -27,24 +27,24 @@ import de.congrace.exp4j.operator.CustomOperator;
  * @author fas@congrace.de
  */
 public class OperatorToken extends CalculationToken {
-	private CustomOperator operation;
+	private Operator operation;
 
 	/**
 	 * construct a new {@link OperatorToken}
 	 *
 	 * @param value the symbol (e.g.: '+')
-	 * @param operation the {@link CustomOperator} of this {@link Token}
+	 * @param operation the {@link Operator} of this {@link Token}
 	 */
-	public OperatorToken(String value, CustomOperator operation) {
+	public OperatorToken(String value, Operator operation) {
 		super(value);
 		this.operation = operation;
 	}
 
 	/**
-	 * apply the {@link CustomOperator}
+	 * apply the {@link Operator}
 	 *
 	 * @param values the doubles to operate on
-	 * @return the result of the {@link CustomOperator}
+	 * @return the result of the {@link Operator}
 	 */
 	public double applyOperation(double... values) {
 		return operation.applyOperation(values);
