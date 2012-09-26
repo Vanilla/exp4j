@@ -1,4 +1,20 @@
-package de.congrace.exp4j;
+/*
+ Copyright 2011 frank asseg
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ */
+package de.congrace.exp4j.expression;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,49 +24,44 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.congrace.exp4j.exception.InvalidCustomFunctionException;
+import de.congrace.exp4j.exception.UnknownFunctionException;
+import de.congrace.exp4j.exception.UnparsableExpressionException;
+import de.congrace.exp4j.function.CustomFunction;
+import de.congrace.exp4j.operator.CustomOperator;
+
 /**
- * This is Builder implementation for the exp4j API used to create a Calculable
- * instance for the user
- * 
+ * This is Builder implementation for the exp4j API used to create a Calculable instance for the
+ * user
+ *
  * @author frank asseg
- * 
+ *
  */
 public class ExpressionBuilder {
-
 	/**
 	 * Property name for unary precedence choice. You can set
-	 * System.getProperty(PROPERTY_UNARY_HIGH_PRECEDENCE,"false") in order to
-	 * change evaluation from an expression like "-3^2" from "(-3)^2" to
-	 * "-(3^2)"
+	 * System.getProperty(PROPERTY_UNARY_HIGH_PRECEDENCE,"false") in order to change evaluation from
+	 * an expression like "-3^2" from "(-3)^2" to "-(3^2)"
 	 */
 	public static final String PROPERTY_UNARY_HIGH_PRECEDENCE = "exp4j.unary.precedence.high";
-
 	private final Map<String, Double> variables = new LinkedHashMap<String, Double>();
-
 	private final Map<String, CustomFunction> customFunctions;
-
 	private final Map<String, CustomOperator> builtInOperators;
-
 	private Map<String, CustomOperator> customOperators = new HashMap<String, CustomOperator>();
-
 	private final List<Character> validOperatorSymbols;
-
 	private final boolean highUnaryPrecedence;
-
 	private String expression;
 
 	/**
 	 * Create a new ExpressionBuilder
-	 * 
-	 * @param expression
-	 *            the expression to evaluate
+	 *
+	 * @param expression the expression to evaluate
 	 */
 	public ExpressionBuilder(String expression) {
 		this.expression = expression;
-		highUnaryPrecedence = System
-				.getProperty(PROPERTY_UNARY_HIGH_PRECEDENCE) == null
+		highUnaryPrecedence = System.getProperty(PROPERTY_UNARY_HIGH_PRECEDENCE) == null
 				|| !System.getProperty(PROPERTY_UNARY_HIGH_PRECEDENCE).equals(
-						"false");
+				"false");
 		customFunctions = getBuiltinFunctions();
 		builtInOperators = getBuiltinOperators();
 		validOperatorSymbols = getValidOperators();
@@ -64,44 +75,44 @@ public class ExpressionBuilder {
 	private Map<String, CustomOperator> getBuiltinOperators() {
 		CustomOperator add = new CustomOperator("+") {
 			@Override
-			protected double applyOperation(double[] values) {
+			public double applyOperation(double[] values) {
 				return values[0] + values[1];
 			}
 		};
 		CustomOperator sub = new CustomOperator("-") {
 			@Override
-			protected double applyOperation(double[] values) {
+			public double applyOperation(double[] values) {
 				return values[0] - values[1];
 			}
 		};
 		CustomOperator div = new CustomOperator("/", 3) {
 			@Override
-			protected double applyOperation(double[] values) {
+			public double applyOperation(double[] values) {
 				return values[0] / values[1];
 			}
 		};
 		CustomOperator mul = new CustomOperator("*", 3) {
 			@Override
-			protected double applyOperation(double[] values) {
+			public double applyOperation(double[] values) {
 				return values[0] * values[1];
 			}
 		};
 		CustomOperator mod = new CustomOperator("%", true, 3) {
 			@Override
-			protected double applyOperation(double[] values) {
+			public double applyOperation(double[] values) {
 				return values[0] % values[1];
 			}
 		};
 		CustomOperator umin = new CustomOperator("\'", false,
 				this.highUnaryPrecedence ? 7 : 5, 1) {
 			@Override
-			protected double applyOperation(double[] values) {
+			public double applyOperation(double[] values) {
 				return -values[0];
 			}
 		};
 		CustomOperator pow = new CustomOperator("^", false, 5, 2) {
 			@Override
-			protected double applyOperation(double[] values) {
+			public double applyOperation(double[] values) {
 				return Math.pow(values[0], values[1]);
 			}
 		};
@@ -246,25 +257,20 @@ public class ExpressionBuilder {
 	}
 
 	/**
-	 * build a new {@link Calculable} from the expression using the supplied
-	 * variables
-	 * 
-	 * @return the {@link Calculable} which can be used to evaluate the
-	 *         expression
-	 * @throws UnknownFunctionException
-	 *             when an unrecognized function name is used in the expression
-	 * @throws UnparsableExpressionException
-	 *             if the expression could not be parsed
+	 * build a new {@link Calculable} from the expression using the supplied variables
+	 *
+	 * @return the {@link Calculable} which can be used to evaluate the expression
+	 * @throws UnknownFunctionException when an unrecognized function name is used in the expression
+	 * @throws UnparsableExpressionException if the expression could not be parsed
 	 */
 	public Calculable build() throws UnknownFunctionException,
 			UnparsableExpressionException {
 		for (CustomOperator op : customOperators.values()) {
-			for (int i = 0; i < op.symbol.length(); i++) {
-				if (!validOperatorSymbols.contains(op.symbol.charAt(i))) {
+			for (int i = 0; i < op.getSymbol().length(); i++) {
+				if (!validOperatorSymbols.contains(op.getSymbol().charAt(i))) {
 					throw new UnparsableExpressionException(
-							""
-									+ op.symbol
-									+ " is not a valid symbol for an operator please choose from: !,#,§,$,&,;,:,~,<,>,|,=");
+							op.getSymbol()
+							+ " is not a valid symbol for an operator please choose from: !,#,§,$,&,;,:,~,<,>,|,=");
 				}
 			}
 		}
@@ -284,13 +290,13 @@ public class ExpressionBuilder {
 			throws UnparsableExpressionException {
 		char[] name = varName.toCharArray();
 		for (int i = 0; i < name.length; i++) {
-			if (i == 0){
-				if (!Character.isLetter(name[i]) && name[i] != '_'){
-					throw new UnparsableExpressionException(varName + " is not a valid variable name: character '" + name[i] + " at " + i); 
+			if (i == 0) {
+				if (!Character.isLetter(name[i]) && name[i] != '_') {
+					throw new UnparsableExpressionException(varName + " is not a valid variable name: character '" + name[i] + " at " + i);
 				}
-			}else{
-				if (!Character.isLetter(name[i]) && !Character.isDigit(name[i]) && name[i] != '_'){
-					throw new UnparsableExpressionException(varName + " is not a valid variable name: character '" + name[i] + " at " + i); 
+			} else {
+				if (!Character.isLetter(name[i]) && !Character.isDigit(name[i]) && name[i] != '_') {
+					throw new UnparsableExpressionException(varName + " is not a valid variable name: character '" + name[i] + " at " + i);
 				}
 			}
 		}
@@ -298,13 +304,12 @@ public class ExpressionBuilder {
 
 	/**
 	 * add a custom function instance for the evaluator to recognize
-	 * 
-	 * @param function
-	 *            the {@link CustomFunction} to add
+	 *
+	 * @param function the {@link CustomFunction} to add
 	 * @return the {@link ExpressionBuilder} instance
 	 */
 	public ExpressionBuilder withCustomFunction(CustomFunction function) {
-		customFunctions.put(function.name, function);
+		customFunctions.put(function.getName(), function);
 		return this;
 	}
 
@@ -318,11 +323,9 @@ public class ExpressionBuilder {
 
 	/**
 	 * set the value for a variable
-	 * 
-	 * @param variableName
-	 *            the variable name e.g. "x"
-	 * @param value
-	 *            the value e.g. 2.32d
+	 *
+	 * @param variableName the variable name e.g. "x"
+	 * @param value the value e.g. 2.32d
 	 * @return the {@link ExpressionBuilder} instance
 	 */
 	public ExpressionBuilder withVariable(String variableName, double value) {
@@ -331,12 +334,9 @@ public class ExpressionBuilder {
 	}
 
 	/**
-	 * set the variables names used in the expression without setting their
-	 * values
-	 * 
-	 * @param variableNames
-	 *            vararg {@link String} of the variable names used in the
-	 *            expression
+	 * set the variables names used in the expression without setting their values
+	 *
+	 * @param variableNames vararg {@link String} of the variable names used in the expression
 	 * @return the ExpressionBuilder instance
 	 */
 	public ExpressionBuilder withVariableNames(String... variableNames) {
@@ -348,9 +348,8 @@ public class ExpressionBuilder {
 
 	/**
 	 * set the values for variables
-	 * 
-	 * @param variableMap
-	 *            a map of variable names to variable values
+	 *
+	 * @param variableMap a map of variable names to variable values
 	 * @return the {@link ExpressionBuilder} instance
 	 */
 	public ExpressionBuilder withVariables(Map<String, Double> variableMap) {
@@ -362,22 +361,19 @@ public class ExpressionBuilder {
 
 	/**
 	 * set a {@link CustomOperator} to be used in the expression
-	 * 
-	 * @param operation
-	 *            the {@link CustomOperator} to be used
+	 *
+	 * @param operation the {@link CustomOperator} to be used
 	 * @return the {@link ExpressionBuilder} instance
 	 */
 	public ExpressionBuilder withOperation(CustomOperator operation) {
-		customOperators.put(operation.symbol, operation);
+		customOperators.put(operation.getSymbol(), operation);
 		return this;
 	}
 
 	/**
-	 * set a {@link Collection} of {@link CustomOperator} to use in the
-	 * expression
-	 * 
-	 * @param operations
-	 *            the {@link Collection} of {@link CustomOperator} to use
+	 * set a {@link Collection} of {@link CustomOperator} to use in the expression
+	 *
+	 * @param operations the {@link Collection} of {@link CustomOperator} to use
 	 * @return the {@link ExpressionBuilder} instance
 	 */
 	public ExpressionBuilder withOperations(
@@ -390,9 +386,8 @@ public class ExpressionBuilder {
 
 	/**
 	 * set the mathematical expression for parsing
-	 * 
-	 * @param expression
-	 *            a mathematical expression
+	 *
+	 * @param expression a mathematical expression
 	 * @return the {@link ExpressionBuilder} instance
 	 */
 	public ExpressionBuilder withExpression(String expression) {

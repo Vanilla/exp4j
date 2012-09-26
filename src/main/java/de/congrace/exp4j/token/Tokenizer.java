@@ -1,19 +1,37 @@
-package de.congrace.exp4j;
+/*
+ Copyright 2011 frank asseg
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ */
+package de.congrace.exp4j.token;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class Tokenizer {
+import de.congrace.exp4j.exception.UnknownFunctionException;
+import de.congrace.exp4j.exception.UnparsableExpressionException;
+import de.congrace.exp4j.function.CustomFunction;
+import de.congrace.exp4j.operator.CustomOperator;
 
+public class Tokenizer {
 	private final Set<String> variableNames;
-
 	private final Map<String, CustomFunction> functions;
-
 	private final Map<String, CustomOperator> operators;
 
-	Tokenizer(Set<String> variableNames, Map<String, CustomFunction> functions,
+	public Tokenizer(Set<String> variableNames, Map<String, CustomFunction> functions,
 			Map<String, CustomOperator> operators) {
 		super();
 		this.variableNames = variableNames;
@@ -49,15 +67,16 @@ class Tokenizer {
 		return false;
 	}
 
-	List<Token> getTokens(final String expression) throws UnparsableExpressionException, UnknownFunctionException {
+	public List<Token> getTokens(final String expression) throws UnparsableExpressionException, UnknownFunctionException {
 		final List<Token> tokens = new ArrayList<Token>();
 		final char[] chars = expression.toCharArray();
 		// iterate over the chars and fork on different types of input
 		Token lastToken;
 		for (int i = 0; i < chars.length; i++) {
 			char c = chars[i];
-			if (c == ' ')
+			if (c == ' ') {
 				continue;
+			}
 			if (Character.isDigit(c)) {
 				final StringBuilder valueBuilder = new StringBuilder(1);
 				// handle the numbers of the expression
@@ -76,7 +95,7 @@ class Tokenizer {
 				int offset = 1;
 				while (chars.length > i + offset
 						&& (Character.isLetter(chars[i + offset]) || Character.isDigit(chars[i + offset]) || chars[i
-								+ offset] == '_')) {
+						+ offset] == '_')) {
 					nameBuilder.append(chars[i + offset++]);
 				}
 				String name = nameBuilder.toString();
@@ -132,5 +151,4 @@ class Tokenizer {
 		}
 		return false;
 	}
-
 }

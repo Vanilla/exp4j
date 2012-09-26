@@ -1,54 +1,52 @@
 /*
-   Copyright 2011 frank asseg
+ Copyright 2011 frank asseg
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
 
  */
-package de.congrace.exp4j;
+package de.congrace.exp4j.token;
 
 import java.util.Map;
 import java.util.Stack;
 
+import de.congrace.exp4j.operator.CustomOperator;
+
 /**
  * {@link Token} for Operations like +,-,*,/,% and ^
- * 
+ *
  * @author fas@congrace.de
  */
-class OperatorToken extends CalculationToken {
-
-	CustomOperator operation;
+public class OperatorToken extends CalculationToken {
+	private CustomOperator operation;
 
 	/**
 	 * construct a new {@link OperatorToken}
-	 * 
-	 * @param value
-	 *            the symbol (e.g.: '+')
-	 * @param operation
-	 *            the {@link CustomOperator} of this {@link Token}
+	 *
+	 * @param value the symbol (e.g.: '+')
+	 * @param operation the {@link CustomOperator} of this {@link Token}
 	 */
-	OperatorToken(String value, CustomOperator operation) {
+	public OperatorToken(String value, CustomOperator operation) {
 		super(value);
 		this.operation = operation;
 	}
 
 	/**
 	 * apply the {@link CustomOperator}
-	 * 
-	 * @param values
-	 *            the doubles to operate on
+	 *
+	 * @param values the doubles to operate on
 	 * @return the result of the {@link CustomOperator}
 	 */
-	double applyOperation(double... values) {
+	public double applyOperation(double... values) {
 		return operation.applyOperation(values);
 	}
 
@@ -67,16 +65,16 @@ class OperatorToken extends CalculationToken {
 	}
 
 	@Override
-	void mutateStackForCalculation(Stack<Double> stack, Map<String, Double> variableValues) {
-		final double[] operands = new double[operation.operandCount];
-		for (int i = 0; i < operation.operandCount; i++) {
-			operands[operation.operandCount - i - 1] = stack.pop();
+	public void mutateStackForCalculation(Stack<Double> stack, Map<String, Double> variableValues) {
+		final double[] operands = new double[operation.getOperandCount()];
+		for (int i = 0; i < operation.getOperandCount(); i++) {
+			operands[operation.getOperandCount() - i - 1] = stack.pop();
 		}
 		stack.push(operation.applyOperation(operands));
 	}
 
 	@Override
-	void mutateStackForInfixTranslation(Stack<Token> operatorStack, StringBuilder output) {
+	public void mutateStackForInfixTranslation(Stack<Token> operatorStack, StringBuilder output) {
 		Token before;
 		while (!operatorStack.isEmpty() && (before = operatorStack.peek()) != null
 				&& (before instanceof OperatorToken || before instanceof FunctionToken)) {
@@ -98,10 +96,10 @@ class OperatorToken extends CalculationToken {
 	}
 
 	private boolean isLeftAssociative() {
-		return operation.leftAssociative;
+		return operation.isLeftAssociative();
 	}
 
 	private int getPrecedence() {
-		return operation.precedence;
+		return operation.getPrecedence();
 	}
 }
