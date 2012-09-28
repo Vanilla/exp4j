@@ -19,6 +19,8 @@ package de.congrace.exp4j.expression;
 import java.util.Map;
 import java.util.Stack;
 
+import gnu.trove.map.TObjectDoubleMap;
+
 import de.congrace.exp4j.exception.UnknownFunctionException;
 import de.congrace.exp4j.exception.UnparsableExpressionException;
 import de.congrace.exp4j.function.Function;
@@ -67,7 +69,7 @@ public abstract class RPNConverter {
 		return exprBuilder.toString();
 	}
 
-	public static RPNExpression toRPNExpression(String infix, Map<String, Double> variables,
+	public static RPNExpression toRPNExpression(String infix, TObjectDoubleMap<String> variables,
 			Map<String, Function> customFunctions, Map<String, Operator> operators)
 			throws UnknownFunctionException, UnparsableExpressionException {
 		final Tokenizer tokenizer = new Tokenizer(variables.keySet(), customFunctions, operators);
@@ -80,7 +82,7 @@ public abstract class RPNConverter {
 		while (operatorStack.size() > 0) {
 			output.append(operatorStack.pop().getValue()).append(" ");
 		}
-		String postfix = output.toString().trim();
+		final String postfix = output.toString().trim();
 		return new RPNExpression(tokenizer.getTokens(postfix), postfix, variables);
 	}
 

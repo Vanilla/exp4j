@@ -17,19 +17,19 @@
 package de.congrace.exp4j.expression;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
+
+import gnu.trove.map.TObjectDoubleMap;
 
 import de.congrace.exp4j.token.CalculationToken;
 import de.congrace.exp4j.token.Token;
 
 public class RPNExpression implements Calculable {
-	final List<Token> tokens;
-	final String expression;
-	final Map<String, Double> variables;
+	private final List<Token> tokens;
+	private final String expression;
+	private final TObjectDoubleMap<String> variables;
 
-	public RPNExpression(List<Token> tokens, String expression, final Map<String, Double> variables) {
-		super();
+	public RPNExpression(List<Token> tokens, String expression, TObjectDoubleMap<String> variables) {
 		this.tokens = tokens;
 		this.expression = expression;
 		this.variables = variables;
@@ -43,18 +43,8 @@ public class RPNExpression implements Calculable {
 	 * @return the result of the calculation
 	 * @throws IllegalArgumentException if the variables are invalid
 	 */
-	public double calculate(double... values) throws IllegalArgumentException {
-		if (variables.isEmpty() && values != null) {
-			throw new IllegalArgumentException("there are no variables to set values");
-		} else if (values != null && values.length != variables.size()) {
-			throw new IllegalArgumentException("The are an unequal number of variables and arguments");
-		}
-		int i = 0;
-		if (variables.size() > 0 && values != null) {
-			for (Map.Entry<String, Double> entry : variables.entrySet()) {
-				entry.setValue(values[i++]);
-			}
-		}
+	@Override
+	public double calculate() {
 		final Stack<Double> stack = new Stack<Double>();
 		for (final Token t : tokens) {
 			((CalculationToken) t).mutateStackForCalculation(stack, variables);
@@ -62,15 +52,18 @@ public class RPNExpression implements Calculable {
 		return stack.pop();
 	}
 
+	@Override
 	public String getExpression() {
 		return expression;
 	}
 
+	@Override
 	public void setVariable(String name, double value) {
-		this.variables.put(name, value);
+		variables.put(name, value);
 	}
 
-	public double calculate() {
-		return calculate(null);
+	@Override
+	public void setVariables(TObjectDoubleMap<String> variables) {
+		this.variables.putAll(variables);
 	}
 }

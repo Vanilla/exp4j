@@ -27,7 +27,6 @@ public abstract class Token {
 	 * @param value the value of the {@link Token}
 	 */
 	public Token(String value) {
-		super();
 		this.value = value;
 	}
 

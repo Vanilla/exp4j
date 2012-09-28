@@ -16,12 +16,10 @@
  */
 package de.congrace.exp4j.function;
 
-import de.congrace.exp4j.exception.InvalidCustomFunctionException;
-
 /**
  * this classed is used to create custom functions for exp4j<br/> <br/> <b>Example</b><br/>
- * <code><pre>{@code} Function fooFunc = new Function("foo") { public double
- * applyFunction(double value) { return value*Math.E; } }; double varX=12d; Calculable calc = new
+ * <code><pre>{@code} Function fooFunc = new Function("foo") { public double applyFunction(double
+ * value) { return value*Math.E; } }; double varX=12d; Calculable calc = new
  * ExpressionBuilder("foo(x)").withCustomFunction(fooFunc).withVariable("x",varX).build();
  * assertTrue(calc.calculate() == Math.E * varX); }</pre></code>
  *
@@ -36,13 +34,13 @@ public abstract class Function {
 	 * create a new single value input Function with a set name
 	 *
 	 * @param value the name of the function (e.g. foo)
+	 * @param argumentCount the minimum number of arguments this function needs
 	 */
-	protected Function(String name) throws InvalidCustomFunctionException {
-		this.argumentCount = 1;
+	protected Function(String name, int argumentCount) {
+		this.argumentCount = argumentCount;
 		this.name = name;
-		int firstChar = (int) name.charAt(0);
-		if ((firstChar < 65 || firstChar > 90) && (firstChar < 97 || firstChar > 122)) {
-			throw new InvalidCustomFunctionException("functions have to start with a lowercase or uppercase character");
+		if (name.isEmpty() || !Character.isLetter(name.charAt(0))) {
+			throw new IllegalArgumentException("Invalid function name: " + name);
 		}
 	}
 
@@ -50,11 +48,9 @@ public abstract class Function {
 	 * create a new single value input Function with a set name
 	 *
 	 * @param value the name of the function (e.g. foo)
-	 * @param argumentCount the minimum number of arguments this function needs
 	 */
-	protected Function(String name, int argumentCount) throws InvalidCustomFunctionException {
-		this.argumentCount = argumentCount;
-		this.name = name;
+	protected Function(String name) {
+		this(name, 1);
 	}
 
 	public abstract double applyFunction(double... args);

@@ -33,7 +33,6 @@ public class Tokenizer {
 
 	public Tokenizer(Set<String> variableNames, Map<String, Function> functions,
 			Map<String, Operator> operators) {
-		super();
 		this.variableNames = variableNames;
 		this.functions = functions;
 		this.operators = operators;

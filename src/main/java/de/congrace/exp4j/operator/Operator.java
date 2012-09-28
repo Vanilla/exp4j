@@ -16,6 +16,9 @@
  */
 package de.congrace.exp4j.operator;
 
+import gnu.trove.set.TCharSet;
+import gnu.trove.set.hash.TCharHashSet;
+
 /**
  * This class is used to create custom operators for use in expressions<br/> The
  * applyOperation(double[] values) will have to be implemented by users of this class. <br/>
@@ -34,6 +37,11 @@ package de.congrace.exp4j.operator;
  *
  */
 public abstract class Operator {
+	private static final TCharSet VALID_OPERATOR_CHARACTERS = new TCharHashSet(new char[]{
+				'+', '-', '*', '/', '%', '^',
+				'!', '#', '§', '$', '&', ';',
+				':', '~', '<', '>', '|', '='
+			});
 	private final boolean leftAssociative;
 	private final String symbol;
 	private final int precedence;
@@ -51,6 +59,11 @@ public abstract class Operator {
 		this.symbol = symbol;
 		this.precedence = precedence;
 		this.operandCount = 2;
+		for (char character : symbol.toCharArray()) {
+			if (!VALID_OPERATOR_CHARACTERS.contains(character)) {
+				throw new IllegalArgumentException("Illegal character for operator symbol: " + character);
+			}
+		}
 	}
 
 	/**
@@ -71,8 +84,7 @@ public abstract class Operator {
 	}
 
 	/**
-	 * Create a left associative {@link Operator} with precedence value of 1 that uses two
-	 * operands
+	 * Create a left associative {@link Operator} with precedence value of 1 that uses two operands
 	 *
 	 * @param symbol the {@link String} to use a symbol for this operation
 	 */
@@ -106,13 +118,13 @@ public abstract class Operator {
 	 *
 	 * </code>
 	 *
-	 * @param values the operands for the operation. If the {@link Operator} uses only one
-	 * operand such as a factorial the operation has to be applied to the first element of the
-	 * values array. If the
-	 *            {@link Operator} uses two operands the operation has to be applied to the first two
-	 * items in the values array, with special care given to the operator associativity. The operand
-	 * to the left of the symbol is the first element in the array while the operand to the right is
-	 * the second element of the array.
+	 * @param values the operands for the operation. If the {@link Operator} uses only one operand
+	 * such as a factorial the operation has to be applied to the first element of the values array.
+	 * If the
+	 *            {@link Operator} uses two operands the operation has to be applied to the first two items in
+	 * the values array, with special care given to the operator associativity. The operand to the
+	 * left of the symbol is the first element in the array while the operand to the right is the
+	 * second element of the array.
 	 * @return the result of the operation
 	 */
 	public abstract double applyOperation(double[] values);

@@ -16,8 +16,9 @@
  */
 package de.congrace.exp4j.token;
 
-import java.util.Map;
 import java.util.Stack;
+
+import gnu.trove.map.TObjectDoubleMap;
 
 /**
  * A {@link Token} for Numbers
@@ -53,7 +54,7 @@ public class NumberToken extends CalculationToken {
 	}
 
 	@Override
-	public void mutateStackForCalculation(Stack<Double> stack, Map<String, Double> variableValues) {
+	public void mutateStackForCalculation(Stack<Double> stack, TObjectDoubleMap<String> variableValues) {
 		stack.push(this.doubleValue);
 	}
 
