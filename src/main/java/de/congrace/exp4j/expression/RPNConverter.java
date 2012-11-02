@@ -83,7 +83,7 @@ public abstract class RPNConverter {
 			output.append(operatorStack.pop().getValue()).append(" ");
 		}
 		final String postfix = output.toString().trim();
-		return new RPNExpression(tokenizer.getTokens(postfix), postfix, variables);
+		return new RPNExpression(tokenizer.getTokens(postfix), variables);
 	}
 
 	private static boolean isOperatorCharacter(char c, Map<String, Operator> operators) {

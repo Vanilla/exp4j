@@ -45,4 +45,8 @@ public class Functions {
 	public static Map<String, Function> getFunctionMap() {
 		return FUNCTIONS;
 	}
+
+	public static boolean isFunction(String expression) {
+		return FUNCTIONS.containsKey(expression);
+	}
 }

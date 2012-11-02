@@ -23,15 +23,14 @@ import gnu.trove.map.TObjectDoubleMap;
 
 import de.congrace.exp4j.token.CalculationToken;
 import de.congrace.exp4j.token.Token;
+import java.util.Collection;
 
 public class RPNExpression implements Calculable {
 	private final List<Token> tokens;
-	private final String expression;
 	private final TObjectDoubleMap<String> variables;
 
-	public RPNExpression(List<Token> tokens, String expression, TObjectDoubleMap<String> variables) {
+	public RPNExpression(List<Token> tokens, TObjectDoubleMap<String> variables) {
 		this.tokens = tokens;
-		this.expression = expression;
 		this.variables = variables;
 	}
 
@@ -41,7 +40,6 @@ public class RPNExpression implements Calculable {
 	 *
 	 * @param values the variable values to be substituted
 	 * @return the result of the calculation
-	 * @throws IllegalArgumentException if the variables are invalid
 	 */
 	@Override
 	public double calculate() {
@@ -53,11 +51,6 @@ public class RPNExpression implements Calculable {
 	}
 
 	@Override
-	public String getExpression() {
-		return expression;
-	}
-
-	@Override
 	public void setVariable(String name, double value) {
 		variables.put(name, value);
 	}
@@ -65,5 +58,10 @@ public class RPNExpression implements Calculable {
 	@Override
 	public void setVariables(TObjectDoubleMap<String> variables) {
 		this.variables.putAll(variables);
+	}
+
+	@Override
+	public Collection<String> getVariableNames() {
+		return variables.keySet();
 	}
 }

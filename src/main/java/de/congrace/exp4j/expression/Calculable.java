@@ -16,6 +16,8 @@
  */
 package de.congrace.exp4j.expression;
 
+import java.util.Collection;
+
 import gnu.trove.map.TObjectDoubleMap;
 
 /**
@@ -33,13 +35,6 @@ public interface Calculable {
 	public double calculate();
 
 	/**
-	 * return the expression in reverse polish postfix notation
-	 *
-	 * @return the expression used to construct this {@link Calculable}
-	 */
-	public String getExpression();
-
-	/**
 	 * set a variable value for the calculation
 	 *
 	 * @param name the variable name
@@ -53,4 +48,11 @@ public interface Calculable {
 	 * @param variables the variable name-value map
 	 */
 	public void setVariables(TObjectDoubleMap<String> variables);
+
+	/**
+	 * Return the name of the variables that need to be set for proper calculation.
+	 *
+	 * @return The variable names
+	 */
+	public Collection<String> getVariableNames();
 }

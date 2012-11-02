@@ -123,19 +123,6 @@ public class ExpressionBuilder {
 	/**
 	 * set the variables names used in the expression without setting their values
 	 *
-	 * @param variableNames vararg {@link String} of the variable names used in the expression
-	 * @return the ExpressionBuilder instance
-	 */
-	public ExpressionBuilder withVariableNames(String... variableNames) {
-		for (String variable : variableNames) {
-			variables.put(variable, 0);
-		}
-		return this;
-	}
-
-	/**
-	 * set the variables names used in the expression without setting their values
-	 *
 	 * @param variableNames collection of {@link String} of the variable names used in the
 	 * expression
 	 * @return the ExpressionBuilder instance

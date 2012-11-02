@@ -32,4 +32,8 @@ public class Constants {
 		}
 		return expression;
 	}
+
+	public static boolean isConstant(String expression) {
+		return CONSTANTS.containsKey(expression);
+	}
 }
