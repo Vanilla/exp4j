@@ -96,14 +96,16 @@ public class ExpressionBuilder {
 	 * @param function the {@link Function} to add
 	 * @return the {@link ExpressionBuilder} instance
 	 */
-	public ExpressionBuilder withCustomFunction(Function function) {
-		functions.put(function.getName(), function);
+	public ExpressionBuilder withCustomFunctions(Function... functions) {
+		for (Function function : functions) {
+			Function f = this.functions.put(function.getName(), function);
+		}
 		return this;
 	}
 
 	public ExpressionBuilder withCustomFunctions(Collection<Function> functions) {
 		for (Function function : functions) {
-			withCustomFunction(function);
+			withCustomFunctions(function);
 		}
 		return this;
 	}
@@ -171,5 +173,14 @@ public class ExpressionBuilder {
 			withOperator(op);
 		}
 		return this;
+	}
+
+	/**
+	 * Get the expression for the builder.
+	 *
+	 * @return the expression
+	 */
+	public String getExpression() {
+		return expression;
 	}
 }
