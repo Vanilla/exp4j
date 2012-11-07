@@ -1,5 +1,9 @@
 package de.congrace.exp4j.constant;
 
+import java.util.Collections;
+import java.util.Map;
+
+import gnu.trove.TDecorators;
 import gnu.trove.iterator.TObjectDoubleIterator;
 import gnu.trove.map.TObjectDoubleMap;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
@@ -20,8 +24,8 @@ public class Constants {
 		return CONSTANTS.get(name);
 	}
 
-	public static TObjectDoubleMap<String> getConstantMap() {
-		return CONSTANTS;
+	public static Map<String, Double> getConstantMap() {
+		return Collections.unmodifiableMap(TDecorators.wrap(CONSTANTS));
 	}
 
 	public static String replaceConstants(String expression) {

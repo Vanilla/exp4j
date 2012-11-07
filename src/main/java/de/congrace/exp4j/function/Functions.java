@@ -1,6 +1,7 @@
 package de.congrace.exp4j.function;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class Functions {
 	}
 
 	public static Map<String, Function> getFunctionMap() {
-		return FUNCTIONS;
+		return Collections.unmodifiableMap(FUNCTIONS);
 	}
 
 	public static boolean isFunction(String expression) {
