@@ -51,7 +51,7 @@ public class ExpressionBuilder {
 	 * @param expression the expression to evaluate
 	 */
 	public ExpressionBuilder(String expression) {
-		this.expression = Constants.replaceConstants(expression);
+		this.expression = expression;
 	}
 
 	/**
@@ -62,6 +62,7 @@ public class ExpressionBuilder {
 	 * @throws UnparsableExpressionException if the expression could not be parsed
 	 */
 	public Calculable build() throws UnknownFunctionException, UnparsableExpressionException {
+		withVariables(Constants.findConstants(expression));
 		for (String varName : variables.keySet()) {
 			checkVariableName(varName);
 			if (functions.containsKey(varName)) {

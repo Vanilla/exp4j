@@ -2,14 +2,16 @@ package de.congrace.exp4j.constant;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import gnu.trove.TDecorators;
-import gnu.trove.iterator.TObjectDoubleIterator;
 import gnu.trove.map.TObjectDoubleMap;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
 public class Constants {
 	private static final TObjectDoubleMap<String> CONSTANTS = new TObjectDoubleHashMap<String>();
+	private static final Pattern CONSTANT_PATTERN = Pattern.compile("[a-zA-Z_]\\w*");
 
 	static {
 		register("PI", Math.PI);
@@ -28,13 +30,16 @@ public class Constants {
 		return Collections.unmodifiableMap(TDecorators.wrap(CONSTANTS));
 	}
 
-	public static String replaceConstants(String expression) {
-		final TObjectDoubleIterator<String> iterator = CONSTANTS.iterator();
-		while (iterator.hasNext()) {
-			iterator.advance();
-			expression = expression.replaceAll("\\Q" + iterator.key() + "\\E", Double.toString(iterator.value()));
+	public static TObjectDoubleMap<String> findConstants(String expression) {
+		final TObjectDoubleMap<String> found = new TObjectDoubleHashMap<String>();
+		final Matcher matcher = CONSTANT_PATTERN.matcher(expression);
+		while (matcher.find()) {
+			final String match = matcher.group();
+			if (CONSTANTS.containsKey(match)) {
+				found.put(match, CONSTANTS.get(match));
+			}
 		}
-		return expression;
+		return found;
 	}
 
 	public static boolean isConstant(String expression) {

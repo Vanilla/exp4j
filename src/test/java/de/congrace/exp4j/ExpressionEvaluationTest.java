@@ -14,7 +14,7 @@ import de.congrace.exp4j.expression.ExpressionBuilder;
 public class ExpressionEvaluationTest {
 	private static final String EXPRESSION = "-(sin(x * PI) + y * 3 / z) + 2^a + 6 % b";
 	private static final TObjectDoubleMap<String> VARIABLES = new TObjectDoubleHashMap<String>();
-	private static final double EVALUATED_VALUE = 3;
+	private static final double VALUE = 3;
 
 	static {
 		VARIABLES.put("x", 0.5);
@@ -27,10 +27,10 @@ public class ExpressionEvaluationTest {
 	@Test
 	public void test() throws UnparsableExpressionException, UnknownFunctionException {
 		final double test1 = new ExpressionBuilder(EXPRESSION).withVariables(VARIABLES).build().calculate();
-		Assert.assertEquals(EVALUATED_VALUE, test1, 0);
+		Assert.assertEquals(VALUE, test1, 0);
 		final Calculable calculable = new ExpressionBuilder(EXPRESSION).withVariableNames(VARIABLES.keySet()).build();
 		calculable.setVariables(VARIABLES);
 		final double test2 = calculable.calculate();
-		Assert.assertEquals(EVALUATED_VALUE, test2, 0);
+		Assert.assertEquals(VALUE, test2, 0);
 	}
 }
