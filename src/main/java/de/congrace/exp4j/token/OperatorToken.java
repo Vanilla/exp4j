@@ -18,6 +18,7 @@ package de.congrace.exp4j.token;
 
 import java.util.Stack;
 
+import gnu.trove.stack.TDoubleStack;
 import gnu.trove.map.TObjectDoubleMap;
 
 import de.congrace.exp4j.operator.Operator;
@@ -66,7 +67,7 @@ public class OperatorToken extends CalculationToken {
 	}
 
 	@Override
-	public void mutateStackForCalculation(Stack<Double> stack, TObjectDoubleMap<String> variableValues) {
+	public void mutateStackForCalculation(TDoubleStack stack, TObjectDoubleMap<String> variableValues) {
 		final double[] operands = new double[operation.getOperandCount()];
 		for (int i = 0; i < operation.getOperandCount(); i++) {
 			operands[operation.getOperandCount() - i - 1] = stack.pop();

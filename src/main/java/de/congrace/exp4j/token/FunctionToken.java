@@ -18,6 +18,7 @@ package de.congrace.exp4j.token;
 
 import java.util.Stack;
 
+import gnu.trove.stack.TDoubleStack;
 import gnu.trove.map.TObjectDoubleMap;
 
 import de.congrace.exp4j.exception.UnknownFunctionException;
@@ -33,12 +34,8 @@ public class FunctionToken extends CalculationToken {
 		if (value == null) {
 			throw new UnknownFunctionException(value);
 		}
-		try {
-			this.functionName = function.getName();
-			this.function = function;
-		} catch (IllegalArgumentException e) {
-			throw new UnknownFunctionException(value);
-		}
+		this.functionName = function.getName();
+		this.function = function;
 	}
 
 	public String getName() {
@@ -60,7 +57,7 @@ public class FunctionToken extends CalculationToken {
 	}
 
 	@Override
-	public void mutateStackForCalculation(Stack<Double> stack, TObjectDoubleMap<String> variableValues) {
+	public void mutateStackForCalculation(TDoubleStack stack, TObjectDoubleMap<String> variableValues) {
 		double[] args = new double[function.getArgumentCount()];
 		for (int i = 0; i < function.getArgumentCount(); i++) {
 			args[i] = stack.pop();

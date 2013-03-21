@@ -16,14 +16,14 @@
  */
 package de.congrace.exp4j.token;
 
-import java.util.Stack;
 
 import gnu.trove.map.TObjectDoubleMap;
+import gnu.trove.stack.TDoubleStack;
 
 public abstract class CalculationToken extends Token {
 	public CalculationToken(String value) {
 		super(value);
 	}
 
-	public abstract void mutateStackForCalculation(Stack<Double> stack, TObjectDoubleMap<String> variableValues);
+	public abstract void mutateStackForCalculation(TDoubleStack stack, TObjectDoubleMap<String> variableValues);
 }

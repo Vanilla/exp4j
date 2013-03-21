@@ -17,13 +17,14 @@
 package de.congrace.exp4j.expression;
 
 import java.util.List;
-import java.util.Stack;
+import java.util.Collection;
 
+import gnu.trove.stack.TDoubleStack;
+import gnu.trove.stack.array.TDoubleArrayStack;
 import gnu.trove.map.TObjectDoubleMap;
 
 import de.congrace.exp4j.token.CalculationToken;
 import de.congrace.exp4j.token.Token;
-import java.util.Collection;
 
 public class RPNExpression implements Calculable {
 	private final List<Token> tokens;
@@ -43,7 +44,7 @@ public class RPNExpression implements Calculable {
 	 */
 	@Override
 	public double calculate() {
-		final Stack<Double> stack = new Stack<Double>();
+		final TDoubleStack stack = new TDoubleArrayStack();
 		for (final Token t : tokens) {
 			((CalculationToken) t).mutateStackForCalculation(stack, variables);
 		}

@@ -19,6 +19,7 @@ package de.congrace.exp4j.token;
 import java.util.Stack;
 
 import gnu.trove.map.TObjectDoubleMap;
+import gnu.trove.stack.TDoubleStack;
 
 /**
  * A {@link Token} for representing variables
@@ -49,7 +50,7 @@ public class VariableToken extends CalculationToken {
 	}
 
 	@Override
-	public void mutateStackForCalculation(Stack<Double> stack, TObjectDoubleMap<String> variableValues) {
+	public void mutateStackForCalculation(TDoubleStack stack, TObjectDoubleMap<String> variableValues) {
 		double value = variableValues.get(this.getValue());
 		stack.push(value);
 	}
