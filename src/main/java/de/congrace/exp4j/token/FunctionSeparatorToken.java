@@ -26,7 +26,7 @@ public class FunctionSeparatorToken extends Token {
 	@Override
 	public void mutateStackForInfixTranslation(Stack<Token> operatorStack, StringBuilder output) {
 		Token token;
-		while (!((token = operatorStack.peek()) instanceof ParenthesisToken) && !token.getValue().equals("(")) {
+		while (!((token = operatorStack.peek()) instanceof ParenthesesToken) && !token.getValue().equals("(")) {
 			output.append(operatorStack.pop().getValue()).append(" ");
 		}
 	}

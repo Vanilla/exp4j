@@ -37,7 +37,13 @@ public class NumberToken extends CalculationToken {
 	 */
 	public NumberToken(String value) {
 		super(value);
-		this.doubleValue = Double.parseDouble(value);
+		if (value.indexOf('E') > 0 || value.indexOf('e') > 0) {
+			final int pos = value.toLowerCase().indexOf('e');
+			doubleValue = Double.parseDouble(value.substring(0, pos))
+					* Math.pow(10, Double.parseDouble(value.substring(pos + 1)));
+		} else {
+			doubleValue = Double.parseDouble(value);
+		}
 	}
 
 	@Override

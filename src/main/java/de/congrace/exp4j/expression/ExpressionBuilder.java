@@ -51,6 +51,9 @@ public class ExpressionBuilder {
 	 * @param expression the expression to evaluate
 	 */
 	public ExpressionBuilder(String expression) {
+		if (expression.trim().isEmpty()) {
+			throw new IllegalArgumentException("Expression can not be empty!.");
+		}
 		this.expression = expression;
 	}
 

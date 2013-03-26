@@ -30,43 +30,51 @@ import de.congrace.exp4j.token.Tokenizer;
 
 public abstract class RPNConverter {
 	private static String substituteUnaryOperators(String expr, Map<String, Operator> operators) {
-		final StringBuilder exprBuilder = new StringBuilder(expr.length());
-		final char[] data = expr.toCharArray();
-		char lastChar = ' ';
-		StringBuilder lastOperation = new StringBuilder();
+		final StringBuilder resultBuilder = new StringBuilder();
+		int whitespaceCount = 0;
 		for (int i = 0; i < expr.length(); i++) {
-			if (exprBuilder.length() > 0) {
-				lastChar = exprBuilder.charAt(exprBuilder.length() - 1);
+			boolean afterOperator = false;
+			boolean afterParantheses = false;
+			boolean expressionStart = false;
+			final char c = expr.charAt(i);
+			if (Character.isWhitespace(c)) {
+				whitespaceCount++;
+				resultBuilder.append(c);
+				continue;
 			}
-			final char c = data[i];
-			if (i > 0 && isOperatorCharacter(expr.charAt(i - 1), operators)) {
-				if (!operators.containsKey(lastOperation.toString() + expr.charAt(i - 1))) {
-					lastOperation = new StringBuilder();
+			if (resultBuilder.length() == whitespaceCount) {
+				expressionStart = true;
+			}
+			// check if last char in the result is an operator
+			if (resultBuilder.length() > whitespaceCount) {
+				if (isOperatorCharacter(resultBuilder.charAt(resultBuilder.length() - 1 - whitespaceCount), operators)) {
+					afterOperator = true;
+				} else if (resultBuilder.charAt(resultBuilder.length() - 1 - whitespaceCount) == '(') {
+					afterParantheses = true;
 				}
-				lastOperation.append(expr.charAt(i - 1));
-			} else if (i > 0 && !Character.isWhitespace(expr.charAt(i - 1))) {
-				lastOperation = new StringBuilder();
 			}
 			switch (c) {
 				case '+':
-					if (i > 0 && lastChar != '(' && operators.get(lastOperation.toString()) == null) {
-						exprBuilder.append(c);
+					if (resultBuilder.length() > 0 && !afterOperator && !afterParantheses && !expressionStart) {
+						// not an unary plus so append the char
+						resultBuilder.append(c);
 					}
 					break;
 				case '-':
-					if (i > 0 && lastChar != '(' && operators.get(lastOperation.toString()) == null) {
-						exprBuilder.append(c);
+					if (resultBuilder.length() > 0 && !afterOperator && !afterParantheses && !expressionStart) {
+						// not unary 
+						resultBuilder.append(c);
 					} else {
-						exprBuilder.append('\'');
+						//unary so we substitute it
+						resultBuilder.append('\'');
 					}
 					break;
 				default:
-					if (!Character.isWhitespace(c)) {
-						exprBuilder.append(c);
-					}
+					resultBuilder.append(c);
 			}
+			whitespaceCount = 0;
 		}
-		return exprBuilder.toString();
+		return resultBuilder.toString();
 	}
 
 	public static RPNExpression toRPNExpression(String infix, TObjectDoubleMap<String> variables,

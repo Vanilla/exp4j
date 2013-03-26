@@ -57,6 +57,10 @@ public class Tokenizer {
 		return functions.containsKey(name);
 	}
 
+	private boolean isNotationSeparator(char c) {
+		return c == 'e' || c == 'E';
+	}
+
 	private boolean isOperatorCharacter(char c) {
 		for (String symbol : operators.keySet()) {
 			if (symbol.indexOf(c) != -1) {
@@ -69,6 +73,9 @@ public class Tokenizer {
 	public List<Token> getTokens(final String expression) throws UnparsableExpressionException, UnknownFunctionException {
 		final List<Token> tokens = new ArrayList<Token>();
 		final char[] chars = expression.toCharArray();
+		int openBraces = 0;
+		int openCurly = 0;
+		int openSquare = 0;
 		// iterate over the chars and fork on different types of input
 		Token lastToken;
 		for (int i = 0; i < chars.length; i++) {
@@ -81,8 +88,25 @@ public class Tokenizer {
 				// handle the numbers of the expression
 				valueBuilder.append(c);
 				int numberLen = 1;
-				while (chars.length > i + numberLen && isDigitOrDecimalSeparator(chars[i + numberLen])) {
-					valueBuilder.append(chars[i + numberLen]);
+				boolean lastCharNotationSeparator = false; // needed to determine if a + or - following an e/E is a unary operation
+				boolean notationSeparatorOccured = false; // to check if only one notation separator has occured
+				while (chars.length > i + numberLen) {
+					if (isDigitOrDecimalSeparator(chars[i + numberLen])) {
+						valueBuilder.append(chars[i + numberLen]);
+						lastCharNotationSeparator = false;
+					} else if (isNotationSeparator(chars[i + numberLen])) {
+						if (notationSeparatorOccured) {
+							throw new UnparsableExpressionException("Number can have only one notation separator 'e/E'");
+						}
+						valueBuilder.append(chars[i + numberLen]);
+						lastCharNotationSeparator = true;
+						notationSeparatorOccured = true;
+					} else if (lastCharNotationSeparator && (chars[i + numberLen] == '-' || chars[i + numberLen] == '+')) {
+						valueBuilder.append(chars[i + numberLen]);
+						lastCharNotationSeparator = false;
+					} else {
+						break; // break out of the while loop here, since the number seem finished
+					}
 					numberLen++;
 				}
 				i += numberLen - 1;
@@ -108,7 +132,7 @@ public class Tokenizer {
 					lastToken = new FunctionToken(name, functions.get(name));
 				} else {
 					// an unknown symbol was encountered
-					throw new UnparsableExpressionException(expression, c, i);
+					throw new UnparsableExpressionException(expression, c, i + 1);
 				}
 			} else if (c == ',') {
 				// a function separator, hopefully
@@ -128,18 +152,57 @@ public class Tokenizer {
 					i += offset - 1;
 					lastToken = new OperatorToken(symbol, operators.get(symbol));
 				} else {
-					throw new UnparsableExpressionException(expression, c, i);
+					throw new UnparsableExpressionException(expression, c, i + 1);
 				}
-			} else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}') {
-				lastToken = new ParenthesisToken(String.valueOf(c));
+			} else if (c == '(') {
+				openBraces++;
+				lastToken = new ParenthesesToken(String.valueOf(c));
+			} else if (c == '{') {
+				openCurly++;
+				lastToken = new ParenthesesToken(String.valueOf(c));
+			} else if (c == '[') {
+				openSquare++;
+				lastToken = new ParenthesesToken(String.valueOf(c));
+			} else if (c == ')') {
+				openBraces--;
+				lastToken = new ParenthesesToken(String.valueOf(c));
+			} else if (c == '}') {
+				openCurly--;
+				lastToken = new ParenthesesToken(String.valueOf(c));
+			} else if (c == ']') {
+				openSquare--;
+				lastToken = new ParenthesesToken(String.valueOf(c));
 			} else {
 				// an unknown symbol was encountered
-				throw new UnparsableExpressionException(expression, c, i);
+				throw new UnparsableExpressionException(expression, c, i + 1);
 			}
 			tokens.add(lastToken);
 		}
+		if (openCurly != 0 || openBraces != 0 | openSquare != 0) {
+			final StringBuilder errorBuilder = new StringBuilder();
+			errorBuilder.append("There are ");
+			boolean first = true;
+			if (openBraces != 0) {
+				errorBuilder.append(Math.abs(openBraces)).append(" unmatched parantheses ");
+				first = false;
+			}
+			if (openCurly != 0) {
+				if (!first) {
+					errorBuilder.append("and ");
+				}
+				errorBuilder.append(Math.abs(openCurly)).append(" unmatched curly brackets ");
+				first = false;
+			}
+			if (openSquare != 0) {
+				if (!first) {
+					errorBuilder.append("and ");
+				}
+				errorBuilder.append(Math.abs(openSquare)).append(" unmatched square brackets ");
+			}
+			errorBuilder.append("in expression '").append(expression).append("'");
+			throw new UnparsableExpressionException(errorBuilder.toString());
+		}
 		return tokens;
-
 	}
 
 	private boolean isOperatorStart(String op) {
