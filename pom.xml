@@ -1,14 +1,29 @@
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Project information -->
+	<name>exp4j</name>
 	<groupId>org.spout</groupId>
 	<artifactId>exp4j</artifactId>
 	<version>0.3.5-SNAPSHOT</version>
-	<name>exp4j</name>
-	<description>A simple mathematical expression evaluator for java. Modified for InfObjects.</description>
+	<packaging>jar</packaging>
+	<inceptionYear>2012</inceptionYear>
+	<url>https://github.com/Vanilla/exp4j</url>
+	<description>Simple mathematical expression evaluator for Java, modified for the Spout projects.</description>
 
+	<!-- Parent information -->
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
+	<!-- Build properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<buildNumber>0</buildNumber>
+		<ciSystem>unknown</ciSystem>
+		<commit>unknown</commit>
 	</properties>
 
 	<!-- License information -->
@@ -20,67 +35,166 @@
 		</license>
 	</licenses>
 
+	<!-- Organization information -->
+	<organization>
+		<name>Spout LLC</name>
+		<url>http://www.spout.org</url>
+	</organization>
+
+	<!-- Project developers -->
+	<developers>
+		<developer>
+			<id>DDoS</id>
+			<name>Aleksi Sapon</name>
+			<email>qctechs@gmail.com</email>
+		</developer>
+		<developer>
+			<id>Wulfspider</id>
+			<name>Luke Spragg</name>
+			<email>the@wulf.im</email>
+		</developer>
+	</developers>
+
 	<!-- Source code access -->
 	<scm>
-		<developerConnection>scm:git:git@github.com:VanillaDev/exp4j.git</developerConnection>
-		<connection>scm:git:git://github.com/VanillaDev/exp4j.git</connection>
-		<url>https://github.com/VanillaDev/exp4j</url>
+		<connection>scm:git:git://github.com/Vanilla/exp4j.git</connection>
+		<developerConnection>scm:git:git@github.com:Vanilla/exp4j.git</developerConnection>
+		<url>https://github.com/Vanilla/exp4j</url>
 	</scm>
 
-	<!-- Build dependencies -->
+	<!-- Continuous integration -->
+	<ciManagement>
+		<system>travis</system>
+		<url>https://travis-ci.org/SpoutDev/exp4j</url>
+	</ciManagement>
+
+	<!-- Issue management -->
+	<issueManagement>
+		<system>jira</system>
+		<url>https://spoutdev.atlassian.net/browse/LIB</url>
+	</issueManagement>
+
+	<!-- Dependency repositories -->
+	<repositories>
+		<repository>
+			<id>sonatype-nexus-releases</id>
+			<url>https://oss.sonatype.org/content/repositories/releases</url>
+		</repository>
+		<repository>
+			<id>sonatype-nexus-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<!-- Build plugin repositories -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype-nexus-releases</id>
+			<url>https://oss.sonatype.org/content/repositories/releases</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<!-- Project dependencies -->
 	<dependencies>
-		<!-- Included in the final JAR -->
+		<!-- Provided by third-party -->
 		<dependency>
 			<groupId>net.sf.trove4j</groupId>
 			<artifactId>trove4j</artifactId>
-			<version>3.0.2</version>
-			<scope>compile</scope>
+			<version>3.0.3</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Testing only -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<type>jar</type>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
-	<!-- Build settings -->
+	<!-- Build configuration -->
 	<build>
+		<defaultGoal>clean install</defaultGoal>
+
+		<!-- Resources to include -->
+		<resources>
+			<!-- Static resources -->
+			<resource>
+				<filtering>false</filtering>
+				<directory>.</directory>
+				<targetPath>.</targetPath>
+				<includes>
+					<include>LICENSE.txt</include>
+				</includes>
+			</resource>
+		</resources>
+
 		<!-- Build plugins -->
 		<plugins>
+			<!-- License header plugin -->
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.10.b1</version>
+				<executions>
+					<execution>
+						<configuration>
+							<properties>
+								<name>${project.name}</name>
+								<url>${project.organization.url}</url>
+								<inceptionYear>${project.inceptionYear}</inceptionYear>
+								<organization>${project.organization.name}</organization>
+							</properties>
+							<quiet>true</quiet>
+							<encoding>UTF-8</encoding>
+							<strictCheck>true</strictCheck>
+							<header>HEADER.txt</header>
+							<mapping>
+								<java>SLASHSTAR_STYLE</java>
+							</mapping>
+							<keywords>
+								<keyword>${project.name}</keyword>
+								<keyword>license</keyword>
+							</keywords>
+							<includes>
+								<include>src/main/java/**</include>
+								<include>src/test/java/**</include>
+							</includes>
+						</configuration>
+						<phase>clean</phase>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<!-- Source compiler plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<compilerArguments>
 						<O>-Xlint:all</O>
 						<O>-Xlint:-path</O>
 					</compilerArguments>
 					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
 				</configuration>
-			</plugin>
-			<!-- JAR dependency addition plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.7.1</version>
-				<executions>
-					<execution>
-						<configuration>
-							<minimizeJar>true</minimizeJar>
-						</configuration>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
