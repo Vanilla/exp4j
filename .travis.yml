@@ -1,0 +1,23 @@
+# Source language and JDK version to use.
+language: java
+jdk: oraclejdk7
+
+# Compile and package JAR and set build properties.
+install: mvn package -DbuildNumber=$TRAVIS_BUILD_NUMBER -DciSystem=travis -Dcommit=${TRAVIS_COMMIT:0:7}
+after_success:
+  # Get files for use with build, namely the custom Maven settings.xml.
+  - "git clone https://github.com/SpoutDev/travis-ci-resources.git target/travis"
+  # Check if commit s not a pull request, if git repo is official, and if branch is master. If checks pass, deploy artifacts to Maven repository.
+  - "[[ $TRAVIS_PULL_REQUEST == false ]] && [[ $TRAVIS_REPO_SLUG == Vanilla/exp4j ]] && [[ $TRAVIS_BRANCH == master ]] && mvn deploy --settings target/travis/settings.xml"
+
+notifications:
+  # Disable build status email notifications, until the issue with forks is fixed.
+  email: false
+  webhooks:
+    # Send build information and status to Notifico.
+    - http://n.tkte.ch/h/497/7BuT1U1x3VzixhvaxbcaxcYM
+
+env:
+  global:
+    - secure: "LYFB1Tfs9WpOikrROplL/d0EuLXjDv/XPLW/KuE+2m1j9r4MkzWMyK9AW7cNSXE5XTEGmn76LUQzOl5plVCO4TMKMQcZB21c0JBgON0E8IDFneOrqP7uwPxtddbdSg+HY1GVqI24+iEs8Xu1a4w9UiRovKBLPh9Uyw7VKD6S3jE="
+    - secure: "a+UXUzLl87gnWYVth4bJV6mb0lVkQvosCibobOwNGm3HZLjRFpnO52CYyWzPgciunoTVa8elyzrspc0gWQg8UgK8OkcIHUO6nyJDGeF7+7EncW/J3hze7sGTOIaNbQR3vt5V0/fkgTloFm81IOaVJcZkpp48SzKlZmC3+faT/Yk="
