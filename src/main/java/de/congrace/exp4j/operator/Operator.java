@@ -30,9 +30,9 @@ import gnu.trove.set.hash.TCharHashSet;
  *     assertTrue(0d == calc.calculate());
  * </pre></code>
  *
- * When constructing {@link Operator} special attention has to be given to the precedence of the operation. see http://en.wikipedia.org/wiki/Order_of_operations. The precendence
- * values for the builtin operators are as follows: <br/> Addition and Subtraction (+,-) have precedence 1<br/> Division Multiplication, and Modulo (/,*,%) have precedence 3<br/> Exponentiation
- * (^) has precendence 5 <br/> Unary minus and plus (+1,-1) have precedence 7
+ * When constructing {@link Operator} special attention has to be given to the precedence of the operation. see http://en.wikipedia.org/wiki/Order_of_operations. The precendence values for the builtin
+ * operators are as follows: <br/> Addition and Subtraction (+,-) have precedence 1<br/> Division Multiplication, and Modulo (/,*,%) have precedence 3<br/> Exponentiation (^) has precendence 5 <br/>
+ * Unary minus and plus (+1,-1) have precedence 7
  *
  * @author frank asseg
  */
